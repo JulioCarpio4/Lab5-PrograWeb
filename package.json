@@ -1,0 +1,26 @@
+{
+  "name": "lab5-prograweb",
+  "version": "1.0.0",
+  "description": "Repo para el middleware creado con express js",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JulioCarpio4/Lab5-PrograWeb.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JulioCarpio4/Lab5-PrograWeb/issues"
+  },
+  "homepage": "https://github.com/JulioCarpio4/Lab5-PrograWeb#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.4"
+  }
+}
