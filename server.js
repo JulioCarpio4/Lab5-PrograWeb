@@ -12,10 +12,10 @@ app.listen(3001, function() {
     console.log('Escuchando en el puerto 3001!');
 })
 
-app.get('/api/v1/jugadores/:id', (req, res) => {
+app.get('/api/v1/jugadores/:id', async (req, res) => {
 
     var player_id = req.params.id;
-    var JugadorBuscado = archivo.Consulta(player_id)
+    var JugadorBuscado = await archivo.Consulta(player_id)
 
     if (JugadorBuscado == undefined) {
 
@@ -36,14 +36,15 @@ app.get('/api/v1/jugadores/', async (req, res) => {
     {
         res.status(500).json("Ocurrió un error inesperado");
     }
-    
+
     res.status(200).json(respuesta);
 });
 
 app.post('/api/v1/jugadores', (req, res) => {
 
-    if (archivo.GuardarElemento(req.body.id, req.body.name))
+    if (archivo.GuardarElemento(req.body.id, req.body))
     {
+        //console.log(req.body);
         res.status(201).json("Jugador almacenado con éxito");
     } 
     else 
@@ -52,9 +53,9 @@ app.post('/api/v1/jugadores', (req, res) => {
     }
 });
 
-app.delete('/api/v1/jugadores/:id', (req, res) => {
+app.delete('/api/v1/jugadores/:id', async (req, res) => {
 
-    if(archivo.Eliminar(req.params.id))
+    if(await archivo.Eliminar(req.params.id))
     {
         res.status(204).json("Jugador eliminado con éxito");
     }
@@ -65,9 +66,9 @@ app.delete('/api/v1/jugadores/:id', (req, res) => {
     }
 });
 
-app.put('/api/v1/jugadores/:id', (req, res) => {
+app.put('/api/v1/jugadores/:id', async (req, res) => {
 
-    if(archivo.Actualizar(req.params.id, req.body.name))
+    if(await archivo.Actualizar(req.params.id, req.body))
     {
         res.status(204).json("Jugador actualizado con éxito");
     }

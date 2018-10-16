@@ -9,11 +9,7 @@ var dbJugador = require('./modelos/db_jugador');
 module.exports = {
     jugadores: [],
 
-    GuardarElemento: async function GuardarElemento(lid, lnombre) {
-
-        //almacenamiento en local. 
-        //let dummyjugador = new player(lid, lnombre);
-        //this.jugadores.push(dummyjugador);
+    GuardarElemento: async function GuardarElemento(lid, l_jugador) {
 
         //Conexión con mongoose. 
         mongoose.connect('mongodb://localhost/Beisbol', { useNewUrlParser: true });
@@ -23,9 +19,12 @@ module.exports = {
         db.on('error', () => loperacion = false);
         db.once('open', function () {
 
-            //console.log("hola");
             //Realizar la inserción del nuevo elemento. 
-            var newPlayer = new dbJugador({ id: lid, nombre: lnombre });
+            var newPlayer = new dbJugador({
+                id: lid, nombre: l_jugador.name,
+                jersey: l_jugador.jersey, estatura: l_jugador.estatura, peso: l_jugador.peso,
+                fec_nacimiento: l_jugador.fec_nacimiento, posicionF: l_jugador.posicionF, posicionB: l_jugador.posicionB
+            });
             newPlayer.save(function (err, newPlayer) {
                 if (err) loperacion = false;
                 loperacion = true;
@@ -43,47 +42,71 @@ module.exports = {
         mongoose.connect('mongodb://localhost/Beisbol', { useNewUrlParser: true });
         var loperacion;
         var db = mongoose.connection;
-        try
-        {
+        try {
             loperacion = await dbJugador.find().exec();
-            console.log(loperacion);
             return loperacion;
-        } catch(err){
-            return 'Ocurrió error';
-        }
-    },
-
-    Consulta: function Consulta(l_id) {
-
-        var existe = this.jugadores.find(pl => pl.id === l_id)
-        console.log(existe);
-    },
-
-
-    Actualizar: function Actualizar(l_id, l_nombre) {
-
-        var existe = this.jugadores.findIndex(pl => pl.id == l_id);
-
-        if (existe != -1) {
-            this.jugadores[existe].nombre = l_nombre;
-            return true;
-        }
-
-        else {
+        } catch (err) {
             return false;
         }
     },
 
-    Eliminar: function Eliminar(l_id) {
+    Consulta: async function Consulta(l_id) {
 
-        var existe = this.jugadores.findIndex(pl => pl.id == l_id);
+        //Conexión con mongoose
+        mongoose.connect('mongodb://localhost/Beisbol', { useNewUrlParser: true });
+        var ljugador;
+        var db = mongoose.connection;
 
-        if (existe != -1) {
-            this.jugadores.pop(existe);
-            return true;
+        try {
+            ljugador = await dbJugador.findOne({ 'id': l_id }).exec();
+            //console.log(ljugador);
+            return ljugador;
+        } catch (err) {
+            return 'Ocurrió error';
         }
 
-        else {
+    },
+
+
+    Actualizar: async function Actualizar(l_id, l_jugador) {
+
+        //Conexión con mongoose. 
+        mongoose.connect('mongodb://localhost/Beisbol', { useNewUrlParser: true });
+        var loperacion;
+        var db = mongoose.connection;
+        try {
+            loperacion = await dbJugador.updateOne({ 'id': l_id }, {
+                "$set": {
+                    'nombre': l_jugador.nombre, 'jersey': l_jugador.jersey,
+                    'estatura': l_jugador.estatura, 'peso': l_jugador.peso, 'fec_nacimiento': l_jugador.fec_nacimiento, 'posicionF': l_jugador.posicionF, 'posicionB': l_jugador.posicionB
+                }
+            },
+                function (err) {
+                    if (err) return handleError(err);
+                    return true;
+                })
+
+            return loperacion;
+        } catch (err) {
+
+        }
+    },
+
+    Eliminar: async function Eliminar(l_id) {
+
+        //Conexión con mongoose. 
+        mongoose.connect('mongodb://localhost/Beisbol', { useNewUrlParser: true });
+        var loperacion;
+        var db = mongoose.connection;
+        try {
+            loperacion = await dbJugador.deleteOne({ 'id': l_id }, function (err) {
+                if (err) return handleError(err);
+
+                return true;
+            })
+            return loperacion;
+
+        } catch (err) {
             return false;
         }
 
