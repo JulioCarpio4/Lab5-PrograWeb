@@ -27,10 +27,16 @@ app.get('/api/v1/jugadores/:id', (req, res) => {
     }
 });
 
-app.get('/api/v1/jugadores/', (req, res) => {
+app.get('/api/v1/jugadores/', async (req, res) => {
 
     //Se retorna el listado completo de jugadores. 
-    var respuesta = archivo.ConsultaTodos();
+    var respuesta = await archivo.ConsultaTodos();
+    
+    if(!respuesta)
+    {
+        res.status(500).json("Ocurrió un error inesperado");
+    }
+    
     res.status(200).json(respuesta);
 });
 
