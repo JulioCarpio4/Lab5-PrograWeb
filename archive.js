@@ -65,7 +65,7 @@ module.exports = {
             //console.log(ljugador);
             return ljugador;
         } catch (err) {
-            return 'Ocurrió error';
+            return false;
         }
 
     },

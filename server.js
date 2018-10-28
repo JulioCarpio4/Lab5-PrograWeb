@@ -1,12 +1,26 @@
 'use strict';
 const express = require('express');
 const cors = require('cors');
+const redis = require('redis');
 
 //const bodyParser = require('body-parser');
 const app = express();
 
 const archivo = require("./archive");
 const player = require('./jugador');
+
+//Cliente local de redis. 
+const client = redis.createClient();
+
+//set redis
+//client.set("string key", "string val", redis.print);
+
+//get redis
+/*
+return client.getAsync('foo').then(function(res) {
+    console.log(res); // => 'bar'
+});
+*/
 
 app.use(express.json());
 
@@ -28,6 +42,29 @@ app.listen(3001, function() {
 app.get('/api/v1/jugadores/:id', cors(), async (req, res) => {
 
     var player_id = req.params.id;
+
+    //Irlo a traer a Redis antes si está
+    return client.get('Jugador' + player_id, async(err, result) =>{
+        if (result){
+            const JsonResult = JSON.parse(result);
+            console.log("Encontré al jugador " + player_id + "en redis!");
+            res.status(200).json(JsonResult);
+        }
+
+        else{
+            var PlayerBuscado = await archivo.Consulta(player_id);
+            if (PlayerBuscado){
+                client.setex('Jugador' + player_id, 5, JSON.stringify(PlayerBuscado));
+                console.log("Encontré al jugador " + player_id + " en mongoDB!");
+                res.status(200).json(PlayerBuscado);
+            }
+            else{
+                res.status(500).json("Ocurrió un error inesperado");
+            }
+        }
+    })
+
+
     var JugadorBuscado = await archivo.Consulta(player_id)
 
     if (JugadorBuscado == undefined) {
@@ -42,15 +79,38 @@ app.get('/api/v1/jugadores/:id', cors(), async (req, res) => {
 
 app.get('/api/v1/jugadores/', cors(), async (req, res) => {
 
-    //Se retorna el listado completo de jugadores. 
-    var respuesta = await archivo.ConsultaTodos();
-    
-    if(!respuesta)
-    {
-        res.status(500).json("Ocurrió un error inesperado");
-    }
+    //Irlo a traer a Redis antes si está. 
+    return client.get('allPlayers', async (err, result) => {
+        if (result){
+            const JsonResult = JSON.parse(result);
+            console.log("Vengo de redis!");
+            res.status(200).json(JsonResult);
+        }
+        else{
+             //Se retorna el listado completo de jugadores. 
+             var respuesta = await archivo.ConsultaTodos();
+             if (respuesta){
+                client.setex('allPlayers', 5, JSON.stringify(respuesta));
+                console.log("Vengo de mongo!");
+                res.status(200).json(respuesta);
+             }
 
-    res.status(200).json(respuesta);
+            else {
+                res.status(500).json("Ocurrió un error inesperado");
+            }
+
+        } 
+    })
+
+    //Se retorna el listado completo de jugadores. 
+    // var respuesta = await archivo.ConsultaTodos();
+    
+    // if(!respuesta)
+    // {
+    //     res.status(500).json("Ocurrió un error inesperado");
+    // }
+
+    // res.status(200).json(respuesta);
 });
 
 app.post('/api/v1/jugadores', cors(), (req, res) => {
