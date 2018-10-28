@@ -21,10 +21,13 @@ module.exports = {
 
             //Realizar la inserción del nuevo elemento. 
             var newPlayer = new dbJugador({
-                id: lid, nombre: l_jugador.name,
+                id: lid, nombre: l_jugador.nombre,
                 jersey: l_jugador.jersey, estatura: l_jugador.estatura, peso: l_jugador.peso,
-                fec_nacimiento: l_jugador.fec_nacimiento, posicionF: l_jugador.posicionF, posicionB: l_jugador.posicionB
+                fec_nacimiento: l_jugador.fec_nacimiento, posicion: l_jugador.posicion, batea: l_jugador.batea, 
+                atrapa: l_jugador.atrapa
             });
+
+            console.log(newPlayer);
             newPlayer.save(function (err, newPlayer) {
                 if (err) loperacion = false;
                 loperacion = true;
@@ -78,7 +81,8 @@ module.exports = {
             loperacion = await dbJugador.updateOne({ 'id': l_id }, {
                 "$set": {
                     'nombre': l_jugador.nombre, 'jersey': l_jugador.jersey,
-                    'estatura': l_jugador.estatura, 'peso': l_jugador.peso, 'fec_nacimiento': l_jugador.fec_nacimiento, 'posicionF': l_jugador.posicionF, 'posicionB': l_jugador.posicionB
+                    'estatura': l_jugador.estatura, 'peso': l_jugador.peso, 'fec_nacimiento': l_jugador.fec_nacimiento, 
+                    'posicion': l_jugador.posicion, 'batea': l_jugador.batea, 'atrapa': l_jugador.atrapa
                 }
             },
                 function (err) {

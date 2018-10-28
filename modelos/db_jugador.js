@@ -9,8 +9,9 @@ var JugadorSchema = mongoose.Schema({
     estatura: {type: Number, required: true},
     peso: {type: Number, required: true},
     fec_nacimiento: {type: Date, required: true},
-    posicionF: {type: String, required: true},
-    posicionB: {type: String, required: true}
+    posicion: {type: String, required: true},
+    batea: {type: String, required: true},
+    atrapa: {type: String, required: true}
 });
 
 JugadorSchema.plugin(uniqueValidator);

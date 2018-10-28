@@ -1,5 +1,7 @@
 'use strict';
 const express = require('express');
+const cors = require('cors');
+
 //const bodyParser = require('body-parser');
 const app = express();
 
@@ -8,11 +10,22 @@ const player = require('./jugador');
 
 app.use(express.json());
 
+const whiteList = ['http://localhost:4200']
+var corsOptions = {
+    origin: function (origin, callback){
+        if(whiteList.indexOf(origin) !== -1){
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    }
+}
+
 app.listen(3001, function() {
     console.log('Escuchando en el puerto 3001!');
 })
 
-app.get('/api/v1/jugadores/:id', async (req, res) => {
+app.get('/api/v1/jugadores/:id', cors(), async (req, res) => {
 
     var player_id = req.params.id;
     var JugadorBuscado = await archivo.Consulta(player_id)
@@ -27,7 +40,7 @@ app.get('/api/v1/jugadores/:id', async (req, res) => {
     }
 });
 
-app.get('/api/v1/jugadores/', async (req, res) => {
+app.get('/api/v1/jugadores/', cors(), async (req, res) => {
 
     //Se retorna el listado completo de jugadores. 
     var respuesta = await archivo.ConsultaTodos();
@@ -40,7 +53,7 @@ app.get('/api/v1/jugadores/', async (req, res) => {
     res.status(200).json(respuesta);
 });
 
-app.post('/api/v1/jugadores', (req, res) => {
+app.post('/api/v1/jugadores', cors(), (req, res) => {
 
     if (archivo.GuardarElemento(req.body.id, req.body))
     {
@@ -53,7 +66,7 @@ app.post('/api/v1/jugadores', (req, res) => {
     }
 });
 
-app.delete('/api/v1/jugadores/:id', async (req, res) => {
+app.delete('/api/v1/jugadores/:id', cors(), async (req, res) => {
 
     if(await archivo.Eliminar(req.params.id))
     {
@@ -66,7 +79,7 @@ app.delete('/api/v1/jugadores/:id', async (req, res) => {
     }
 });
 
-app.put('/api/v1/jugadores/:id', async (req, res) => {
+app.put('/api/v1/jugadores/:id', cors(), async (req, res) => {
 
     if(await archivo.Actualizar(req.params.id, req.body))
     {
