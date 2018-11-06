@@ -12,7 +12,7 @@ module.exports = {
     GuardarElemento: async function GuardarElemento(lid, l_jugador) {
 
         //Conexión con mongoose. 
-        mongoose.connect('mongodb://localhost/Beisbol', { useNewUrlParser: true });
+        mongoose.connect("mongodb://hostmongo:27017/Beisbol", { useNewUrlParser: true });
         var loperacion = false;
         var db = mongoose.connection;
 
@@ -35,36 +35,44 @@ module.exports = {
         });
 
         //db.close();
-
+        mongoose.connection.close();
         return loperacion
     },
 
     ConsultaTodos: async function Consulta() {
 
         //Conexión con mongoose. 
-        mongoose.connect('mongodb://localhost/Beisbol', { useNewUrlParser: true });
+        mongoose.connect("mongodb://hostmongo:27017/Beisbol", { useNewUrlParser: true });
         var loperacion;
         var db = mongoose.connection;
         try {
             loperacion = await dbJugador.find().exec();
+            mongoose.connection.close();
             return loperacion;
         } catch (err) {
+            mongoose.connection.close();
             return false;
         }
+
+        
     },
 
     Consulta: async function Consulta(l_id) {
 
         //Conexión con mongoose
-        mongoose.connect('mongodb://localhost/Beisbol', { useNewUrlParser: true });
+        mongoose.connect("mongodb://hostmongo:27017/Beisbol", { useNewUrlParser: true });
         var ljugador;
         var db = mongoose.connection;
 
         try {
             ljugador = await dbJugador.findOne({ 'id': l_id }).exec();
             //console.log(ljugador);
+            mongoose.connection.close();
+            console.log(ljugador);
             return ljugador;
         } catch (err) {
+            mongoose.connection.close();
+            
             return false;
         }
 
@@ -74,7 +82,7 @@ module.exports = {
     Actualizar: async function Actualizar(l_id, l_jugador) {
 
         //Conexión con mongoose. 
-        mongoose.connect('mongodb://localhost/Beisbol', { useNewUrlParser: true });
+        mongoose.connect("mongodb://hostmongo:27017/Beisbol", { useNewUrlParser: true });
         var loperacion;
         var db = mongoose.connection;
         try {
@@ -87,9 +95,11 @@ module.exports = {
             },
                 function (err) {
                     if (err) return handleError(err);
+                    mongoose.connection.close();
                     return true;
                 })
 
+                mongoose.connection.close();
             return loperacion;
         } catch (err) {
 
@@ -99,18 +109,22 @@ module.exports = {
     Eliminar: async function Eliminar(l_id) {
 
         //Conexión con mongoose. 
-        mongoose.connect('mongodb://localhost/Beisbol', { useNewUrlParser: true });
+        mongoose.connect("mongodb://hostmongo:27017/Beisbol", { useNewUrlParser: true });
         var loperacion;
         var db = mongoose.connection;
         try {
             loperacion = await dbJugador.deleteOne({ 'id': l_id }, function (err) {
                 if (err) return handleError(err);
 
+                mongoose.connection.close();
                 return true;
             })
+
+            mongoose.connection.close();
             return loperacion;
 
         } catch (err) {
+            mongoose.connection.close();
             return false;
         }
 

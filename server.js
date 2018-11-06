@@ -2,25 +2,13 @@
 const express = require('express');
 const cors = require('cors');
 const redis = require('redis');
-
-//const bodyParser = require('body-parser');
 const app = express();
 
 const archivo = require("./archive");
 const player = require('./jugador');
 
 //Cliente local de redis. 
-const client = redis.createClient();
-
-//set redis
-//client.set("string key", "string val", redis.print);
-
-//get redis
-/*
-return client.getAsync('foo').then(function(res) {
-    console.log(res); // => 'bar'
-});
-*/
+const client = redis.createClient(6379, "hostredis");
 
 app.use(express.json());
 
@@ -63,18 +51,6 @@ app.get('/api/v1/jugadores/:id', cors(), async (req, res) => {
             }
         }
     })
-
-
-    var JugadorBuscado = await archivo.Consulta(player_id)
-
-    if (JugadorBuscado == undefined) {
-
-        res.status(404).json("No se ha encontrado el id solicitado");
-    }
-
-    else {
-        res.status(200).json(JugadorBuscado);
-    }
 });
 
 app.get('/api/v1/jugadores/', cors(), async (req, res) => {
@@ -101,16 +77,6 @@ app.get('/api/v1/jugadores/', cors(), async (req, res) => {
 
         } 
     })
-
-    //Se retorna el listado completo de jugadores. 
-    // var respuesta = await archivo.ConsultaTodos();
-    
-    // if(!respuesta)
-    // {
-    //     res.status(500).json("Ocurrió un error inesperado");
-    // }
-
-    // res.status(200).json(respuesta);
 });
 
 app.post('/api/v1/jugadores', cors(), (req, res) => {
