@@ -1,54 +1,130 @@
 var player = require('./jugador');
 
+//Conexión a la base de datos con mongoose. 
+const mongoose = require('mongoose');
+
+//Importación del modelo de jugadores
+var dbJugador = require('./modelos/db_jugador');
+
 module.exports = {
     jugadores: [],
 
-    GuardarElemento: function GuardarElemento(id, nombre) {
+    GuardarElemento: async function GuardarElemento(lid, l_jugador) {
 
-        let dummyjugador = new player(id, nombre);
-        this.jugadores.push(dummyjugador);
-        return true;
+        //Conexión con mongoose. 
+        mongoose.connect("mongodb://prograwebmongodb.westus.azurecontainer.io:27017/Beisbol", { useNewUrlParser: true });
+        var loperacion = false;
+        var db = mongoose.connection;
+
+        db.on('error', () => loperacion = false);
+        db.once('open', function () {
+
+            //Realizar la inserción del nuevo elemento. 
+            var newPlayer = new dbJugador({
+                id: lid, nombre: l_jugador.nombre,
+                jersey: l_jugador.jersey, estatura: l_jugador.estatura, peso: l_jugador.peso,
+                fec_nacimiento: l_jugador.fec_nacimiento, posicion: l_jugador.posicion, batea: l_jugador.batea, 
+                atrapa: l_jugador.atrapa
+            });
+
+            console.log(newPlayer);
+            newPlayer.save(function (err, newPlayer) {
+                if (err) loperacion = false;
+                loperacion = true;
+            })
+        });
+
+        //db.close();
+        //mongoose.connection.close();
+        return loperacion
     },
 
-    ConsultaTodos: function Consulta() {
-        return this.jugadores;
-    },
+    ConsultaTodos: async function Consulta() {
 
-    Consulta: function Consulta(l_id) {
-
-        var existe = this.jugadores.find(pl => pl.id === l_id)
-        console.log(existe);
-    },
-
-
-    Actualizar: function Actualizar(l_id, l_nombre) {
-
-        var existe = this.jugadores.findIndex( pl => pl.id == l_id);
-        
-        if (existe != -1)
-        {
-            this.jugadores[existe].nombre = l_nombre;
-            return true;
-        }
-
-        else 
-        {
+        //Conexión con mongoose. 
+        mongoose.connect("mongodb://prograwebmongodb.westus.azurecontainer.io:27017/Beisbol", { useNewUrlParser: true });
+        var loperacion;
+        var db = mongoose.connection;
+        try {
+            loperacion = await dbJugador.find().exec();
+            mongoose.connection.close();
+            return loperacion;
+        } catch (err) {
+            mongoose.connection.close();
             return false;
         }
+
+        
     },
 
-    Eliminar: function Eliminar(l_id) {
+    Consulta: async function Consulta(l_id) {
 
-        var existe = this.jugadores.findIndex( pl => pl.id == l_id);
-        
-        if (existe != -1)
-        {
-            this.jugadores.pop(existe);
-            return true;
+        //Conexión con mongoose
+        mongoose.connect("mongodb://prograwebmongodb.westus.azurecontainer.io:27017/Beisbol", { useNewUrlParser: true });
+        var ljugador;
+        var db = mongoose.connection;
+
+        try {
+            ljugador = await dbJugador.findOne({ 'id': l_id }).exec();
+            //console.log(ljugador);
+            mongoose.connection.close();
+            console.log(ljugador);
+            return ljugador;
+        } catch (err) {
+            mongoose.connection.close();
+            
+            return false;
         }
 
-        else 
-        {
+    },
+
+
+    Actualizar: async function Actualizar(l_id, l_jugador) {
+
+        //Conexión con mongoose. 
+        mongoose.connect("mongodb://prograwebmongodb.westus.azurecontainer.io:27017/Beisbol", { useNewUrlParser: true });
+        var loperacion;
+        var db = mongoose.connection;
+        try {
+            loperacion = await dbJugador.updateOne({ 'id': l_id }, {
+                "$set": {
+                    'nombre': l_jugador.nombre, 'jersey': l_jugador.jersey,
+                    'estatura': l_jugador.estatura, 'peso': l_jugador.peso, 'fec_nacimiento': l_jugador.fec_nacimiento, 
+                    'posicion': l_jugador.posicion, 'batea': l_jugador.batea, 'atrapa': l_jugador.atrapa
+                }
+            },
+                function (err) {
+                    if (err) return handleError(err);
+                    mongoose.connection.close();
+                    return true;
+                })
+
+                mongoose.connection.close();
+            return loperacion;
+        } catch (err) {
+
+        }
+    },
+
+    Eliminar: async function Eliminar(l_id) {
+
+        //Conexión con mongoose. 
+        mongoose.connect("mongodb://prograwebmongodb.westus.azurecontainer.io:27017/Beisbol", { useNewUrlParser: true });
+        var loperacion;
+        var db = mongoose.connection;
+        try {
+            loperacion = await dbJugador.deleteOne({ 'id': l_id }, function (err) {
+                if (err) return handleError(err);
+
+                mongoose.connection.close();
+                return true;
+            })
+
+            mongoose.connection.close();
+            return loperacion;
+
+        } catch (err) {
+            mongoose.connection.close();
             return false;
         }
 
