@@ -12,7 +12,7 @@ module.exports = {
     GuardarElemento: async function GuardarElemento(lid, l_jugador) {
 
         //Conexión con mongoose. 
-        mongoose.connect("mongodb://hostmongo:27017/Beisbol", { useNewUrlParser: true });
+        mongoose.connect("mongodb://prograwebmongodb.westus.azurecontainer.io:27017/Beisbol", { useNewUrlParser: true });
         var loperacion = false;
         var db = mongoose.connection;
 
@@ -35,14 +35,14 @@ module.exports = {
         });
 
         //db.close();
-        mongoose.connection.close();
+        //mongoose.connection.close();
         return loperacion
     },
 
     ConsultaTodos: async function Consulta() {
 
         //Conexión con mongoose. 
-        mongoose.connect("mongodb://hostmongo:27017/Beisbol", { useNewUrlParser: true });
+        mongoose.connect("mongodb://prograwebmongodb.westus.azurecontainer.io:27017/Beisbol", { useNewUrlParser: true });
         var loperacion;
         var db = mongoose.connection;
         try {
@@ -60,7 +60,7 @@ module.exports = {
     Consulta: async function Consulta(l_id) {
 
         //Conexión con mongoose
-        mongoose.connect("mongodb://hostmongo:27017/Beisbol", { useNewUrlParser: true });
+        mongoose.connect("mongodb://prograwebmongodb.westus.azurecontainer.io:27017/Beisbol", { useNewUrlParser: true });
         var ljugador;
         var db = mongoose.connection;
 
@@ -82,7 +82,7 @@ module.exports = {
     Actualizar: async function Actualizar(l_id, l_jugador) {
 
         //Conexión con mongoose. 
-        mongoose.connect("mongodb://hostmongo:27017/Beisbol", { useNewUrlParser: true });
+        mongoose.connect("mongodb://prograwebmongodb.westus.azurecontainer.io:27017/Beisbol", { useNewUrlParser: true });
         var loperacion;
         var db = mongoose.connection;
         try {
@@ -109,7 +109,7 @@ module.exports = {
     Eliminar: async function Eliminar(l_id) {
 
         //Conexión con mongoose. 
-        mongoose.connect("mongodb://hostmongo:27017/Beisbol", { useNewUrlParser: true });
+        mongoose.connect("mongodb://prograwebmongodb.westus.azurecontainer.io:27017/Beisbol", { useNewUrlParser: true });
         var loperacion;
         var db = mongoose.connection;
         try {

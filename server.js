@@ -8,9 +8,10 @@ const archivo = require("./archive");
 const player = require('./jugador');
 
 //Cliente local de redis. 
-const client = redis.createClient(6379, "hostredis");
+const client = redis.createClient(6379, "prograwebredis.westus.azurecontainer.io");
 
 app.use(express.json());
+app.use(cors());
 
 const whiteList = ['http://localhost:4200']
 var corsOptions = {
@@ -47,7 +48,8 @@ app.get('/api/v1/jugadores/:id', cors(), async (req, res) => {
                 res.status(200).json(PlayerBuscado);
             }
             else{
-                res.status(500).json("Ocurrió un error inesperado");
+
+                res.status(404).json({ error: "No se logró encontrar al jugador buscado"});
             }
         }
     })
@@ -72,7 +74,7 @@ app.get('/api/v1/jugadores/', cors(), async (req, res) => {
              }
 
             else {
-                res.status(500).json("Ocurrió un error inesperado");
+                res.status(404).json({error: "No se logró obtener a los jugadores."});
             }
 
         } 
@@ -84,11 +86,11 @@ app.post('/api/v1/jugadores', cors(), (req, res) => {
     if (archivo.GuardarElemento(req.body.id, req.body))
     {
         //console.log(req.body);
-        res.status(201).json("Jugador almacenado con éxito");
+        res.status(201).json({mensaje: "Jugador almacenado con éxito"});
     } 
     else 
     {
-        res.status(500).json("Ocurrión un error inesperado");
+        res.status(500).json({error: "No se pudo insertar al jugador. Ocurrió un error inesperado"});
     }
 });
 
@@ -96,12 +98,12 @@ app.delete('/api/v1/jugadores/:id', cors(), async (req, res) => {
 
     if(await archivo.Eliminar(req.params.id))
     {
-        res.status(204).json("Jugador eliminado con éxito");
+        res.status(204).json({mensaje: "Jugador eliminado con éxito"});
     }
 
     else 
     {
-        res.status(404).json("Jugador no encontrado");
+        res.status(404).json({error: "Jugador no encontrado"});
     }
 });
 
@@ -109,11 +111,11 @@ app.put('/api/v1/jugadores/:id', cors(), async (req, res) => {
 
     if(await archivo.Actualizar(req.params.id, req.body))
     {
-        res.status(204).json("Jugador actualizado con éxito");
+        res.status(204).json({mensaje: "Jugador actualizado con éxito"});
     }
 
     else 
     {
-        res.status(404).json("Jugador no encontrado");
+        res.status(404).json({error: "Jugador no encontrado"});
     }
 });
